@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: slack-king-of-time
+  name: slack-king-of-time
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: slack-king-of-time
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: slack-king-of-time
+    spec:
+      containers:
+        - env:
+            - name: CONFIG_JSON
+              valueFrom:
+                configMapKeyRef:
+                  name: slack-king-of-time-config
+                  key: config-json
+            - name: LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-king-of-time-secrets
+                  key: LOG_LEVEL
+            - name: LOGIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-king-of-time-secrets
+                  key: LOGIN_URL
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: slack-king-of-time-secrets
+                  key: SLACK_SIGNING_SECRET
+            - name: SLACK_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-king-of-time-secrets
+                  key: SLACK_BOT_TOKEN
+            - name: SLACK_APP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-king-of-time-secrets
+                  key: SLACK_APP_TOKEN
+          image: yujiosaka/slack-king-of-time:latest
+          name: slack-king-of-time
+          resources: {}
+      restartPolicy: Always
+status: {}

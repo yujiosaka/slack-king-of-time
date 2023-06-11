@@ -1,0 +1,15 @@
+{
+  "channel": "C05AGSJPVTR",
+  "users": [
+    {
+      "slackUser": "slack-user-id",
+      "clockInCronExpression": "0 9 * * *",
+      "clockOutInterval": 999999,
+      "kingOfTimeUserId": "king-of-time-user-id",
+      "kingOfTimePassword": "king-of-time-password",
+      "workingHours": 9,
+      "skipWeekend": true,
+      "skipJpHoliday": true
+    }
+  ]
+}

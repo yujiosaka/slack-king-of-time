@@ -1,0 +1,9 @@
+# Ignore Git files and directories
+.git
+.gitignore
+
+# Ignore Node.js modules
+node_modules
+
+# Ignore build
+dist
