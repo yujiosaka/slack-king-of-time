@@ -1,6 +1,6 @@
 {
   "name": "slack-king-of-time",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Slack bot to automate logging in KING OF TIME (www.kingtime.jp)",
   "main": "dist/index.js",
   "bin": {
