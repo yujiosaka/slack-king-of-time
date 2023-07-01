@@ -91,7 +91,7 @@ export default class SlackKingOfTime {
       if (!!user.skipWeekend && isJpWeekend(date)) return;
       if (!!user.skipJpHoliday && isJpHoliday(date)) return;
 
-      const ts = await this._findMessageTs(formatTitle(user.slackUser));
+      const [ts] = await this._findMessageTs(formatTitle(user.slackUser));
       if (ts) return;
 
       const blocks = BlockBuilder.buildBeforeClockIn(user.slackUser);
@@ -105,10 +105,10 @@ export default class SlackKingOfTime {
       if (!!user.skipWeekend && isJpWeekend(date)) return;
       if (!!user.skipJpHoliday && isJpHoliday(date)) return;
 
-      const ts = await this._findMessageTs(`${formatTitle(user.slackUser)}\nI'm working on schedule :innocent:`);
+      const [ts, editedTs] = await this._findMessageTs(`${formatTitle(user.slackUser)}\nI'm working on schedule :innocent:`);
       if (!ts) return;
 
-      const clockInDate = messageTsToDate(ts);
+      const clockInDate = messageTsToDate(editedTs ?? ts);
       const clockOutDate = addHours(clockInDate, user.workingHours);
       if (date < clockOutDate) return;
 
@@ -260,7 +260,7 @@ export default class SlackKingOfTime {
       return;
     }
 
-    const ts = await this._findMessageTs(`${formatTitle(user.slackUser)}`);
+    const [ts] = await this._findMessageTs(`${formatTitle(user.slackUser)}`);
     if (ts) {
       await args.respond("Your timecard is already posted");
       return;
@@ -281,13 +281,17 @@ export default class SlackKingOfTime {
     return user;
   }
 
-  async _findMessageTs(text: string): Promise<string | null> {
+  async _findMessageTs(text: string): Promise<[string | null, string | null]> {
     const jpStartOfToday = getJpStartOfToday();
     const oldest = Math.floor(jpStartOfToday.getTime() / 1000).toString();
 
     const response = await this._app.client.conversations.history({ channel: config.channel, oldest });
     const message = response?.messages?.find((message) => message.blocks?.[0]?.text?.text?.startsWith(text));
-    return message?.ts ?? null;
+
+    const ts = message?.ts ?? null;
+    const editedTs = message?.edited?.ts ?? null;
+
+    return [ts, editedTs];
   }
 
   _getMessageTs(body: BlockAction): string {
